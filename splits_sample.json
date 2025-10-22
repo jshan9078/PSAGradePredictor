@@ -1,0 +1,608 @@
+{
+  "train": [
+    {
+      "cert_id": 68344500,
+      "grade": 8,
+      "back": "png/8/68344500_back.png",
+      "front": "png/8/68344500_front.png"
+    },
+    {
+      "cert_id": 68344501,
+      "grade": 8,
+      "back": "png/8/68344501_back.png",
+      "front": "png/8/68344501_front.png"
+    },
+    {
+      "cert_id": 68344502,
+      "grade": 8,
+      "back": "png/8/68344502_back.png",
+      "front": "png/8/68344502_front.png"
+    },
+    {
+      "cert_id": 68344503,
+      "grade": 9,
+      "back": "png/9/68344503_back.png",
+      "front": "png/9/68344503_front.png"
+    },
+    {
+      "cert_id": 68344504,
+      "grade": 9,
+      "back": "png/9/68344504_back.png",
+      "front": "png/9/68344504_front.png"
+    },
+    {
+      "cert_id": 68344505,
+      "grade": 9,
+      "back": "png/9/68344505_back.png",
+      "front": "png/9/68344505_front.png"
+    },
+    {
+      "cert_id": 68344506,
+      "grade": 9,
+      "back": "png/9/68344506_back.png",
+      "front": "png/9/68344506_front.png"
+    },
+    {
+      "cert_id": 68344507,
+      "grade": 10,
+      "back": "png/10/68344507_back.png",
+      "front": "png/10/68344507_front.png"
+    },
+    {
+      "cert_id": 68344508,
+      "grade": 8,
+      "back": "png/8/68344508_back.png",
+      "front": "png/8/68344508_front.png"
+    },
+    {
+      "cert_id": 68344510,
+      "grade": 10,
+      "back": "png/10/68344510_back.png",
+      "front": "png/10/68344510_front.png"
+    },
+    {
+      "cert_id": 68344511,
+      "grade": 10,
+      "back": "png/10/68344511_back.png",
+      "front": "png/10/68344511_front.png"
+    },
+    {
+      "cert_id": 68344512,
+      "grade": 8,
+      "back": "png/8/68344512_back.png",
+      "front": "png/8/68344512_front.png"
+    },
+    {
+      "cert_id": 68344513,
+      "grade": 9,
+      "back": "png/9/68344513_back.png",
+      "front": "png/9/68344513_front.png"
+    },
+    {
+      "cert_id": 68344514,
+      "grade": 9,
+      "back": "png/9/68344514_back.png",
+      "front": "png/9/68344514_front.png"
+    },
+    {
+      "cert_id": 68344515,
+      "grade": 9,
+      "back": "png/9/68344515_back.png",
+      "front": "png/9/68344515_front.png"
+    },
+    {
+      "cert_id": 69101986,
+      "grade": 7,
+      "back": "png/7/69101986_back.png",
+      "front": "png/7/69101986_front.png"
+    },
+    {
+      "cert_id": 69101987,
+      "grade": 8,
+      "back": "png/8/69101987_back.png",
+      "front": "png/8/69101987_front.png"
+    },
+    {
+      "cert_id": 69101988,
+      "grade": 10,
+      "back": "png/10/69101988_back.png",
+      "front": "png/10/69101988_front.png"
+    },
+    {
+      "cert_id": 69101990,
+      "grade": 5,
+      "back": "png/5/69101990_back.png",
+      "front": "png/5/69101990_front.png"
+    },
+    {
+      "cert_id": 69101991,
+      "grade": 6,
+      "back": "png/6/69101991_back.png",
+      "front": "png/6/69101991_front.png"
+    },
+    {
+      "cert_id": 69101992,
+      "grade": 6,
+      "back": "png/6/69101992_back.png",
+      "front": "png/6/69101992_front.png"
+    },
+    {
+      "cert_id": 69101993,
+      "grade": 7,
+      "back": "png/7/69101993_back.png",
+      "front": "png/7/69101993_front.png"
+    },
+    {
+      "cert_id": 69101994,
+      "grade": 6,
+      "back": "png/6/69101994_back.png",
+      "front": "png/6/69101994_front.png"
+    },
+    {
+      "cert_id": 69101995,
+      "grade": 6,
+      "back": "png/6/69101995_back.png",
+      "front": "png/6/69101995_front.png"
+    },
+    {
+      "cert_id": 69101997,
+      "grade": 7,
+      "back": "png/7/69101997_back.png",
+      "front": "png/7/69101997_front.png"
+    },
+    {
+      "cert_id": 69101998,
+      "grade": 7,
+      "back": "png/7/69101998_back.png",
+      "front": "png/7/69101998_front.png"
+    },
+    {
+      "cert_id": 69101999,
+      "grade": 5,
+      "back": "png/5/69101999_back.png",
+      "front": "png/5/69101999_front.png"
+    },
+    {
+      "cert_id": 69102000,
+      "grade": 8,
+      "back": "png/8/69102000_back.png",
+      "front": "png/8/69102000_front.png"
+    },
+    {
+      "cert_id": 69102001,
+      "grade": 5,
+      "back": "png/5/69102001_back.png",
+      "front": "png/5/69102001_front.png"
+    },
+    {
+      "cert_id": 69102002,
+      "grade": 7,
+      "back": "png/7/69102002_back.png",
+      "front": "png/7/69102002_front.png"
+    },
+    {
+      "cert_id": 69102003,
+      "grade": 8,
+      "back": "png/8/69102003_back.png",
+      "front": "png/8/69102003_front.png"
+    },
+    {
+      "cert_id": 69102004,
+      "grade": 7,
+      "back": "png/7/69102004_back.png",
+      "front": "png/7/69102004_front.png"
+    },
+    {
+      "cert_id": 69102005,
+      "grade": 7,
+      "back": "png/7/69102005_back.png",
+      "front": "png/7/69102005_front.png"
+    },
+    {
+      "cert_id": 69102006,
+      "grade": 8,
+      "back": "png/8/69102006_back.png",
+      "front": "png/8/69102006_front.png"
+    },
+    {
+      "cert_id": 69102007,
+      "grade": 8,
+      "back": "png/8/69102007_back.png",
+      "front": "png/8/69102007_front.png"
+    },
+    {
+      "cert_id": 69102008,
+      "grade": 7,
+      "back": "png/7/69102008_back.png",
+      "front": "png/7/69102008_front.png"
+    },
+    {
+      "cert_id": 69102010,
+      "grade": 7,
+      "back": "png/7/69102010_back.png",
+      "front": "png/7/69102010_front.png"
+    },
+    {
+      "cert_id": 69696463,
+      "grade": 8,
+      "back": "png/8/69696463_back.png",
+      "front": "png/8/69696463_front.png"
+    },
+    {
+      "cert_id": 69696464,
+      "grade": 9,
+      "back": "png/9/69696464_back.png",
+      "front": "png/9/69696464_front.png"
+    },
+    {
+      "cert_id": 69696465,
+      "grade": 10,
+      "back": "png/10/69696465_back.png",
+      "front": "png/10/69696465_front.png"
+    },
+    {
+      "cert_id": 70258709,
+      "grade": 5,
+      "back": "png/5/70258709_back.png",
+      "front": "png/5/70258709_front.png"
+    },
+    {
+      "cert_id": 70258710,
+      "grade": 5,
+      "back": "png/5/70258710_back.png",
+      "front": "png/5/70258710_front.png"
+    },
+    {
+      "cert_id": 70258711,
+      "grade": 7,
+      "back": "png/7/70258711_back.png",
+      "front": "png/7/70258711_front.png"
+    },
+    {
+      "cert_id": 70258712,
+      "grade": 8,
+      "back": "png/8/70258712_back.png",
+      "front": "png/8/70258712_front.png"
+    },
+    {
+      "cert_id": 70258713,
+      "grade": 9,
+      "back": "png/9/70258713_back.png",
+      "front": "png/9/70258713_front.png"
+    },
+    {
+      "cert_id": 70258714,
+      "grade": 8,
+      "back": "png/8/70258714_back.png",
+      "front": "png/8/70258714_front.png"
+    },
+    {
+      "cert_id": 70258715,
+      "grade": 6,
+      "back": "png/6/70258715_back.png",
+      "front": "png/6/70258715_front.png"
+    },
+    {
+      "cert_id": 70258717,
+      "grade": 8,
+      "back": "png/8/70258717_back.png",
+      "front": "png/8/70258717_front.png"
+    },
+    {
+      "cert_id": 70258718,
+      "grade": 9,
+      "back": "png/9/70258718_back.png",
+      "front": "png/9/70258718_front.png"
+    },
+    {
+      "cert_id": 70258719,
+      "grade": 7,
+      "back": "png/7/70258719_back.png",
+      "front": "png/7/70258719_front.png"
+    }
+  ],
+  "val": [
+    {
+      "cert_id": 68344499,
+      "grade": 8,
+      "back": "png/8/68344499_back.png",
+      "front": "png/8/68344499_front.png"
+    },
+    {
+      "cert_id": 68344509,
+      "grade": 10,
+      "back": "png/10/68344509_back.png",
+      "front": "png/10/68344509_front.png"
+    },
+    {
+      "cert_id": 69101989,
+      "grade": 7,
+      "back": "png/7/69101989_back.png",
+      "front": "png/7/69101989_front.png"
+    },
+    {
+      "cert_id": 69101996,
+      "grade": 9,
+      "back": "png/9/69101996_back.png",
+      "front": "png/9/69101996_front.png"
+    },
+    {
+      "cert_id": 69102009,
+      "grade": 8,
+      "back": "png/8/69102009_back.png",
+      "front": "png/8/69102009_front.png"
+    },
+    {
+      "cert_id": 70258716,
+      "grade": 6,
+      "back": "png/6/70258716_back.png",
+      "front": "png/6/70258716_front.png"
+    },
+    {
+      "cert_id": 70258724,
+      "grade": 9,
+      "back": "png/9/70258724_back.png",
+      "front": "png/9/70258724_front.png"
+    },
+    {
+      "cert_id": 70258736,
+      "grade": 10,
+      "back": "png/10/70258736_back.png",
+      "front": "png/10/70258736_front.png"
+    },
+    {
+      "cert_id": 70273039,
+      "grade": 7,
+      "back": "png/7/70273039_back.png",
+      "front": "png/7/70273039_front.png"
+    },
+    {
+      "cert_id": 70923502,
+      "grade": 9,
+      "back": "png/9/70923502_back.png",
+      "front": "png/9/70923502_front.png"
+    },
+    {
+      "cert_id": 71559611,
+      "grade": 10,
+      "back": "png/10/71559611_back.png",
+      "front": "png/10/71559611_front.png"
+    },
+    {
+      "cert_id": 71560380,
+      "grade": 8,
+      "back": "png/8/71560380_back.png",
+      "front": "png/8/71560380_front.png"
+    },
+    {
+      "cert_id": 71561455,
+      "grade": 10,
+      "back": "png/10/71561455_back.png",
+      "front": "png/10/71561455_front.png"
+    },
+    {
+      "cert_id": 71561699,
+      "grade": 10,
+      "back": "png/10/71561699_back.png",
+      "front": "png/10/71561699_front.png"
+    },
+    {
+      "cert_id": 71562742,
+      "grade": 9,
+      "back": "png/9/71562742_back.png",
+      "front": "png/9/71562742_front.png"
+    },
+    {
+      "cert_id": 71562751,
+      "grade": 10,
+      "back": "png/10/71562751_back.png",
+      "front": "png/10/71562751_front.png"
+    },
+    {
+      "cert_id": 71571559,
+      "grade": 9,
+      "back": "png/9/71571559_back.png",
+      "front": "png/9/71571559_front.png"
+    },
+    {
+      "cert_id": 71571743,
+      "grade": 10,
+      "back": "png/10/71571743_back.png",
+      "front": "png/10/71571743_front.png"
+    },
+    {
+      "cert_id": 71573627,
+      "grade": 9,
+      "back": "png/9/71573627_back.png",
+      "front": "png/9/71573627_front.png"
+    },
+    {
+      "cert_id": 71573639,
+      "grade": 10,
+      "back": "png/10/71573639_back.png",
+      "front": "png/10/71573639_front.png"
+    },
+    {
+      "cert_id": 71573648,
+      "grade": 9,
+      "back": "png/9/71573648_back.png",
+      "front": "png/9/71573648_front.png"
+    },
+    {
+      "cert_id": 71579682,
+      "grade": 6,
+      "back": "png/6/71579682_back.png",
+      "front": "png/6/71579682_front.png"
+    },
+    {
+      "cert_id": 71580373,
+      "grade": 10,
+      "back": "png/10/71580373_back.png",
+      "front": "png/10/71580373_front.png"
+    },
+    {
+      "cert_id": 71588682,
+      "grade": 9,
+      "back": "png/9/71588682_back.png",
+      "front": "png/9/71588682_front.png"
+    },
+    {
+      "cert_id": 71588693,
+      "grade": 9,
+      "back": "png/9/71588693_back.png",
+      "front": "png/9/71588693_front.png"
+    }
+  ],
+  "test": [
+    {
+      "cert_id": 92964183,
+      "grade": 7,
+      "back": "png/7/92964183_back.png",
+      "front": "png/7/92964183_front.png"
+    },
+    {
+      "cert_id": 92964188,
+      "grade": 8,
+      "back": "png/8/92964188_back.png",
+      "front": "png/8/92964188_front.png"
+    },
+    {
+      "cert_id": 93089351,
+      "grade": 9,
+      "back": "png/9/93089351_back.png",
+      "front": "png/9/93089351_front.png"
+    },
+    {
+      "cert_id": 93089359,
+      "grade": 8,
+      "back": "png/8/93089359_back.png",
+      "front": "png/8/93089359_front.png"
+    },
+    {
+      "cert_id": 93089371,
+      "grade": 8,
+      "back": "png/8/93089371_back.png",
+      "front": "png/8/93089371_front.png"
+    },
+    {
+      "cert_id": 93453394,
+      "grade": 6,
+      "back": "png/6/93453394_back.png",
+      "front": "png/6/93453394_front.png"
+    },
+    {
+      "cert_id": 93453403,
+      "grade": 8,
+      "back": "png/8/93453403_back.png",
+      "front": "png/8/93453403_front.png"
+    },
+    {
+      "cert_id": 93453412,
+      "grade": 9,
+      "back": "png/9/93453412_back.png",
+      "front": "png/9/93453412_front.png"
+    },
+    {
+      "cert_id": 93453433,
+      "grade": 8,
+      "back": "png/8/93453433_back.png",
+      "front": "png/8/93453433_front.png"
+    },
+    {
+      "cert_id": 93453443,
+      "grade": 9,
+      "back": "png/9/93453443_back.png",
+      "front": "png/9/93453443_front.png"
+    },
+    {
+      "cert_id": 93453451,
+      "grade": 8,
+      "back": "png/8/93453451_back.png",
+      "front": "png/8/93453451_front.png"
+    },
+    {
+      "cert_id": 93453464,
+      "grade": 8,
+      "back": "png/8/93453464_back.png",
+      "front": "png/8/93453464_front.png"
+    },
+    {
+      "cert_id": 93520182,
+      "grade": 10,
+      "back": "png/10/93520182_back.png",
+      "front": "png/10/93520182_front.png"
+    },
+    {
+      "cert_id": 93750050,
+      "grade": 9,
+      "back": "png/9/93750050_back.png",
+      "front": "png/9/93750050_front.png"
+    },
+    {
+      "cert_id": 93750062,
+      "grade": 10,
+      "back": "png/10/93750062_back.png",
+      "front": "png/10/93750062_front.png"
+    },
+    {
+      "cert_id": 93764913,
+      "grade": 10,
+      "back": "png/10/93764913_back.png",
+      "front": "png/10/93764913_front.png"
+    },
+    {
+      "cert_id": 93896526,
+      "grade": 9,
+      "back": "png/9/93896526_back.png",
+      "front": "png/9/93896526_front.png"
+    },
+    {
+      "cert_id": 93896539,
+      "grade": 8,
+      "back": "png/8/93896539_back.png",
+      "front": "png/8/93896539_front.png"
+    },
+    {
+      "cert_id": 93896547,
+      "grade": 9,
+      "back": "png/9/93896547_back.png",
+      "front": "png/9/93896547_front.png"
+    },
+    {
+      "cert_id": 94000298,
+      "grade": 9,
+      "back": "png/9/94000298_back.png",
+      "front": "png/9/94000298_front.png"
+    },
+    {
+      "cert_id": 94000303,
+      "grade": 7,
+      "back": "png/7/94000303_back.png",
+      "front": "png/7/94000303_front.png"
+    },
+    {
+      "cert_id": 94210140,
+      "grade": 10,
+      "back": "png/10/94210140_back.png",
+      "front": "png/10/94210140_front.png"
+    },
+    {
+      "cert_id": 94210152,
+      "grade": 9,
+      "back": "png/9/94210152_back.png",
+      "front": "png/9/94210152_front.png"
+    },
+    {
+      "cert_id": 94210159,
+      "grade": 10,
+      "back": "png/10/94210159_back.png",
+      "front": "png/10/94210159_front.png"
+    },
+    {
+      "cert_id": 94210410,
+      "grade": 10,
+      "back": "png/10/94210410_back.png",
+      "front": "png/10/94210410_front.png"
+    }
+  ]
+}

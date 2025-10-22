@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gcloud compute instances describe psa-dev --zone=us-east1-d --format=\"table(name,status,creationTimestamp,machineType,disks[0].diskSizeGb)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

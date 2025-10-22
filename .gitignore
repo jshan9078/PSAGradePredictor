@@ -1,0 +1,140 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# PyCharm
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Machine Learning
+*.h5
+*.pkl
+*.pth
+*.pt
+*.onnx
+*.pb
+checkpoints/
+models/
+logs/
+runs/
+wandb/
+
+# Data files (large datasets)
+*.csv
+*.json
+!.vscode/*.json
+!.claude/*.json
+dataset_manifest.csv
+splits.json
+splits_sample.json
+
+# Image files (can be large)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+png/
+images/
+testdata/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate.backup
+terraform.tfstate.*.backup
+crash.log
+crash.*.log
+
+# Google Cloud
+*.json
+!.vscode/*.json
+!.claude/*.json
+!splits_sample.json
+# Uncomment the line below if you have service account keys
+# *-key.json
+# *-credentials.json
+
+# Credentials and secrets
+**/credentials.json
+**/service-account*.json
+**/*-key.json
+**/*-credentials.json
+gcloud-service-key.json
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db

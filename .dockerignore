@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data & Models (should be in GCS)
+*.pth
+*.pt
+checkpoints/
+data/
+png/
+*.csv
+*.json
+!splits.json
+!requirements.txt
+
+# Git
+.git/
+.gitignore
+
+# Terraform
+terraform/
+*.tfstate
+*.tfstate.backup
+
+# Misc
+.DS_Store
+*.log
+README.md
