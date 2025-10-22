@@ -187,43 +187,8 @@ See [.env.example](.env.example) for complete list and [SECURITY.md](SECURITY.md
 
 See [CHANGELOG.md](CHANGELOG.md) for complete chronological history with metrics and lessons learned.
 
-## Development
-
-### Local Testing
-
-```bash
-# Test with sample data (no GCS access required)
-./scripts/test_local_offline.sh
-```
-
-### Running Tests
-
-```bash
-# Unit tests
-pytest tests/
-
-# Integration test with single batch
-python test.py
-```
-
-## Contributing
-
-1. Review [SECURITY.md](SECURITY.md) for credential management
-2. Create `.env` from `.env.example`
-3. Never commit credentials or `.env` files
-4. Test locally before submitting to Vertex AI
-5. Document all model changes in [CHANGELOG.md](CHANGELOG.md)
-
-## License
-
-[Your License Here]
-
-## Authors
-
-[Your Team/Name]
-
 ## Acknowledgments
 
 - Google Cloud Vertex AI for training infrastructure
 - PyTorch team for the framework
-- PSA for grading standards
+- PSA for providing training data
