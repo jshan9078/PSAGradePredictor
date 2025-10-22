@@ -11,7 +11,6 @@ This project uses computer vision to predict PSA (Professional Sports Authentica
 - **Dual-branch architecture**: Separate ResNet encoders for front/back card images
 - **Advanced preprocessing**: LAB color space with CLAHE, edge detection, and gradient features
 - **Production-ready**: Containerized training on Vertex AI with GCS integration
-- **Security-first**: Environment variables for all credentials, comprehensive `.gitignore`
 - **Well-documented**: Complete training history with chronological model evolution
 
 ## Quick Start
@@ -79,7 +78,6 @@ psa-estimator/
 ├── Dockerfile            # Vertex AI training container
 ├── requirements.txt      # Python dependencies
 ├── CHANGELOG.md          # Model training history
-├── SECURITY.md           # Security best practices
 └── SETUP.md             # Detailed setup instructions
 ```
 
@@ -123,7 +121,6 @@ Optimizer: AdamW
 ## Documentation
 
 - **[SETUP.md](SETUP.md)** - Detailed environment setup guide
-- **[SECURITY.md](SECURITY.md)** - Security and credential management
 - **[CHANGELOG.md](CHANGELOG.md)** - Complete training history and model evolution
 - **[docs/deployment.md](docs/deployment.md)** - Vertex AI deployment guide
 - **[docs/architecture.md](docs/architecture.md)** - Model architecture deep dive
@@ -173,8 +170,6 @@ GCS_BUCKET         # Bucket for models/checkpoints
 GCS_DATA_BUCKET    # Bucket for training data
 REPO_NAME          # Artifact Registry repository name
 ```
-
-See [.env.example](.env.example) for complete list and [SECURITY.md](SECURITY.md) for best practices.
 
 ## Training History Highlights
 
