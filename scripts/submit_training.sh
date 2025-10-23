@@ -70,7 +70,7 @@ replica-count=1,\
 accelerator-type=${ACCELERATOR_TYPE},\
 accelerator-count=${ACCELERATOR_COUNT},\
 container-image-uri=${IMAGE_URI} \
-  --args=--splits_path,${SPLITS_PATH},--output_dir,/tmp/checkpoints,--gcs_data_bucket,${GCS_DATA_BUCKET},--gcs_checkpoint_dir,${CHECKPOINT_DIR},--gcs_model_dir,${MODEL_EXPORT_DIR},--image_size,384,--batch_size,16,--phase1_epochs,0,--phase2_epochs,50,--lr_phase1,1e-3,--lr_phase2,3e-4,--back_depth,34,--dropout,0.25,--weight_decay,2e-4,--use_sampler
+  --args=--splits_path,${SPLITS_PATH},--output_dir,/tmp/checkpoints,--gcs_data_bucket,${GCS_DATA_BUCKET},--gcs_checkpoint_dir,${CHECKPOINT_DIR},--gcs_model_dir,${MODEL_EXPORT_DIR},--image_size,384,--batch_size,16,--phase1_epochs,0,--phase2_epochs,50,--lr_phase1,1e-3,--lr_phase2,3e-4,--back_depth,34,--dropout,0.25,--weight_decay,2e-4,--use_sampler,--use_coral
 
 echo ""
 echo "=========================================="

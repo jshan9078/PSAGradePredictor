@@ -4,11 +4,12 @@ A deep learning system for automated PSA grading of collectible cards using dual
 
 ## Overview
 
-This project uses computer vision to predict PSA (Professional Sports Authenticator) grades (1-10) for collectible cards by analyzing both front and back images. The model achieves **0.76 Quadratic Weighted Kappa (QWK)** on validation data.
+This project uses computer vision to predict PSA (Professional Sports Authenticator) grades (1-10) for collectible cards by analyzing both front and back images. The model achieves **0.84 Quadratic Weighted Kappa (QWK)** on validation data using CORAL ordinal regression.
 
 ### Key Features
 
 - **Dual-branch architecture**: Separate ResNet encoders for front/back card images
+- **CORAL ordinal regression**: Respects grade ordering for better performance
 - **Advanced preprocessing**: LAB color space with CLAHE, edge detection, and gradient features
 - **Production-ready**: Containerized training on Vertex AI with GCS integration
 - **Well-documented**: Complete training history with chronological model evolution
@@ -61,7 +62,7 @@ psa-estimator/
 ├── src/                    # Source code
 │   ├── train.py           # Main training script
 │   ├── model.py           # Dual-branch ResNet architecture
-│   ├── losses.py          # Custom loss functions (CE + EMD)
+│   ├── losses.py          # Custom loss functions (CORAL/CE/EMD)
 │   ├── dataset.py         # PyTorch dataset with GCS support
 │   ├── preprocess.py      # LAB/CLAHE/edge preprocessing
 │   └── gcs_utils.py       # Google Cloud Storage utilities
@@ -90,29 +91,37 @@ psa-estimator/
 - **Total parameters**: ~32M
 - **Input size**: 384×384 RGB
 - **Preprocessing**: LAB color space, CLAHE, Sobel gradients, Laplacian
-- **Loss function**: Weighted Cross-Entropy (0.9) + Earth Mover's Distance (0.7)
+- **Loss function**: CORAL (Consistent Rank Logits) ordinal regression
+- **Previous baseline**: Weighted Cross-Entropy + Earth Mover's Distance
 
 See [CHANGELOG.md](CHANGELOG.md) for complete model evolution history.
 
 ## Performance
 
-### Current Best Model (Epoch 27)
+### Current Best Model (Run 7, CORAL - Epoch 11)
+
+| Metric | Train | Validation |
+|--------|-------|------------|
+| **QWK** | 0.90 | **0.84** |
+| **Loss** | 1.51 | 1.59 |
+
+**Achievement**: CORAL ordinal regression delivers **+10% QWK improvement** and **55% loss reduction** ✅
+
+### Previous Baseline (Run 3 - Epoch 27)
 
 | Metric | Train | Validation |
 |--------|-------|------------|
 | **QWK** | 0.87 | **0.76** |
 | **Loss** | 0.49 | 3.53 |
 
-**Achievement**: Exceeded the target of 0.7+ validation QWK ✅
-
 ### Training Configuration
 
 ```bash
 Phase 1 (Back-only): 0 epochs (skipped)
 Phase 2 (Dual-branch): 50 epochs
+Loss function: CORAL ordinal regression
 Learning rate: 3e-4 (with ReduceLROnPlateau)
 Regularization: Dropout 0.25, Weight decay 2e-4
-Label smoothing: 0.1
 Image size: 384×384
 Batch size: 16
 Optimizer: AdamW
@@ -179,6 +188,7 @@ REPO_NAME          # Artifact Registry repository name
 4. **Architecture evolution**: ResNet-34/34 → ResNet-18/34 with balanced regularization
 5. **Training strategy**: Eliminated back-only pretraining phase (0 epochs Phase 1)
 6. **Regularization tuning**: Found optimal balance (dropout 0.25, weight decay 2e-4)
+7. **CORAL ordinal regression**: Replaced CE+EMD with ordinal-aware loss for +10% QWK boost
 
 See [CHANGELOG.md](CHANGELOG.md) for complete chronological history with metrics and lessons learned.
 

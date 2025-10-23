@@ -144,12 +144,16 @@ class DualBranchPSA(nn.Module):
         hidden: int = 512,
         use_rim_mask: bool = True,
         rim_mask_ratio: float = 0.07,
+        use_coral: bool = False,  # NEW: Enable CORAL ordinal regression
+        num_classes: int = 10,
     ):
         super().__init__()
         assert 0.0 < lambda_fusion < 1.0
         self.lambda_fusion = lambda_fusion
         self.use_rim_mask = use_rim_mask
         self.rim_mask_ratio = rim_mask_ratio
+        self.use_coral = use_coral
+        self.num_classes = num_classes
 
         # Encoders
         self.front_enc, d_f = build_resnet_encoder(front_depth, in_channels, pretrained)
@@ -182,7 +186,10 @@ class DualBranchPSA(nn.Module):
         )
 
         # Heads
-        self.head_grade = nn.Linear(hidden, 10)
+        # For CORAL: output num_classes-1 cumulative binary logits
+        # For standard: output num_classes logits
+        grade_output_dim = (num_classes - 1) if use_coral else num_classes
+        self.head_grade = nn.Linear(hidden, grade_output_dim)
         self.head_edge = nn.Linear(hidden, 1)
         # Paper §5.4.4: Centering head uses back branch only (h_b)
         self.head_center = nn.Linear(d_b, 2)
@@ -236,6 +243,32 @@ class DualBranchPSA(nn.Module):
         x = torch.flatten(x, 1)
         return x
 
+    def _coral_logits_to_probs(self, cumulative_logits: torch.Tensor) -> torch.Tensor:
+        """
+        Convert CORAL cumulative logits to class probabilities.
+
+        Args:
+            cumulative_logits: [B, num_classes-1] cumulative binary logits
+
+        Returns:
+            [B, num_classes] class probabilities
+        """
+        # Get cumulative probabilities P(y > k)
+        cum_probs = torch.sigmoid(cumulative_logits)  # [B, num_classes-1]
+
+        # Pad with 0 and 1 boundaries
+        # P(y > -1) = 1 (always true), P(y > num_classes-1) = 0 (always false)
+        cum_probs = torch.cat([
+            torch.ones(cum_probs.size(0), 1, device=cum_probs.device),  # P(y > -1) = 1
+            cum_probs,
+            torch.zeros(cum_probs.size(0), 1, device=cum_probs.device)  # P(y > K) = 0
+        ], dim=1)  # [B, num_classes+1]
+
+        # Class probabilities: P(y = k) = P(y > k-1) - P(y > k)
+        probs = cum_probs[:, :-1] - cum_probs[:, 1:]  # [B, num_classes]
+
+        return probs
+
     def forward(
         self,
         front: torch.Tensor,   # [B, 6, H, W]
@@ -251,7 +284,7 @@ class DualBranchPSA(nn.Module):
         z = torch.concat([self.lambda_fusion * h_b, (1.0 - self.lambda_fusion) * h_f], dim=1)
         z = self.fuse(z)
 
-        logits = self.head_grade(z)                         # [B, 10]
+        logits = self.head_grade(z)  # [B, 9] if CORAL else [B, 10]
         edge_logit = self.head_edge(z).squeeze(-1)          # [B]
         # Paper §5.4.4: Centering uses back branch only (geometric info)
         center = self.head_center(h_b)                      # [B, 2]
@@ -259,6 +292,11 @@ class DualBranchPSA(nn.Module):
         out = {"logits": logits, "edge_logit": edge_logit, "center": center}
 
         if return_probs:
-            probs = F.softmax(logits / max(temperature, 1e-6), dim=-1)
+            if self.use_coral:
+                # Convert CORAL cumulative logits to class probabilities
+                probs = self._coral_logits_to_probs(logits)
+            else:
+                # Standard softmax
+                probs = F.softmax(logits / max(temperature, 1e-6), dim=-1)
             out["probs"] = probs
         return out

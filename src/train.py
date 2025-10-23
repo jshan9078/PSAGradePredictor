@@ -21,7 +21,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, OneCycleLR, ReduceLROnPl
 
 from dataset import PSADataset
 from model import DualBranchPSA
-from losses import CompositeLoss, compute_metrics
+from losses import CompositeLoss, compute_metrics, coral_logits_to_predictions
 from sampler import create_imbalanced_sampler
 from augmentations import get_train_augmentations, get_val_augmentations
 from gcs_utils import save_checkpoint_to_gcs, export_model_to_gcs, download_from_gcs
@@ -86,7 +86,7 @@ def mixup_criterion(criterion, outputs, targets_a, targets_b, lam):
     return mixed_loss
 
 
-def train_epoch(model, loader, criterion, optimizer, device, phase="dual", mixup_alpha=0.0):
+def train_epoch(model, loader, criterion, optimizer, device, phase="dual", mixup_alpha=0.0, use_coral=False):
     """
     Train for one epoch.
 
@@ -98,6 +98,7 @@ def train_epoch(model, loader, criterion, optimizer, device, phase="dual", mixup
         device: torch.device
         phase: "back_only" or "dual" for curriculum learning
         mixup_alpha: Mixup alpha parameter (0.0 = disabled, 0.3-0.4 recommended)
+        use_coral: Whether model uses CORAL ordinal regression
 
     Returns:
         dict with loss and metrics
@@ -154,7 +155,10 @@ def train_epoch(model, loader, criterion, optimizer, device, phase="dual", mixup
         total_loss += loss.item()
 
         # Collect predictions
-        preds = outputs['logits'].argmax(dim=1)
+        if use_coral:
+            preds = coral_logits_to_predictions(outputs['logits'])
+        else:
+            preds = outputs['logits'].argmax(dim=1)
         all_preds.extend(preds.cpu().numpy())
         all_targets.extend(grade.cpu().numpy())
 
@@ -178,8 +182,12 @@ def train_epoch(model, loader, criterion, optimizer, device, phase="dual", mixup
     }
 
 
-def validate(model, loader, criterion, device, phase="dual"):
-    """Validate the model."""
+def validate(model, loader, criterion, device, phase="dual", use_coral=False):
+    """Validate the model.
+
+    Args:
+        use_coral: If True, use CORAL prediction logic instead of argmax
+    """
     model.eval()
     total_loss = 0
     num_batches = 0
@@ -212,7 +220,10 @@ def validate(model, loader, criterion, device, phase="dual"):
             total_loss += loss_dict['loss'].item()
             num_batches += 1
 
-            preds = outputs['logits'].argmax(dim=1)
+            if use_coral:
+                preds = coral_logits_to_predictions(outputs['logits'])
+            else:
+                preds = outputs['logits'].argmax(dim=1)
             all_preds.extend(preds.cpu().numpy())
             all_targets.extend(grade.cpu().numpy())
 
@@ -391,7 +402,8 @@ def main(args):
         pretrained=args.pretrained,
         dropout=args.dropout,
         use_rim_mask=args.use_rim_mask,
-        rim_mask_ratio=args.rim_mask_ratio
+        rim_mask_ratio=args.rim_mask_ratio,
+        use_coral=args.use_coral
     ).to(device)
 
     print(f"\nModel parameters: {sum(p.numel() for p in model.parameters()):,}")
@@ -402,7 +414,8 @@ def main(args):
         alpha_emd=args.alpha_emd,
         beta_edge=args.beta_edge,
         beta_center=args.beta_center,
-        label_smoothing=args.label_smoothing
+        label_smoothing=args.label_smoothing,
+        use_coral=args.use_coral
     )
 
     # ====================================
@@ -430,9 +443,10 @@ def main(args):
             train_metrics = train_epoch(
                 model, train_loader, criterion, optimizer, device,
                 phase="back_only",
-                mixup_alpha=0.0  # No mixup in phase 1
+                mixup_alpha=0.0,  # No mixup in phase 1
+                use_coral=args.use_coral
             )
-            val_metrics = validate(model, val_loader, criterion, device, phase="back_only")
+            val_metrics = validate(model, val_loader, criterion, device, phase="back_only", use_coral=args.use_coral)
 
             scheduler.step()
 
@@ -489,9 +503,10 @@ def main(args):
         train_metrics = train_epoch(
             model, train_loader, criterion, optimizer, device,
             phase="dual",
-            mixup_alpha=args.mixup_alpha
+            mixup_alpha=args.mixup_alpha,
+            use_coral=args.use_coral
         )
-        val_metrics = validate(model, val_loader, criterion, device)
+        val_metrics = validate(model, val_loader, criterion, device, use_coral=args.use_coral)
 
         print(f"Train | Loss: {train_metrics['loss']:.4f}, "
               f"Acc: {train_metrics['accuracy']:.4f}, "
@@ -594,6 +609,8 @@ if __name__ == "__main__":
     parser.add_argument('--beta_center', type=float, default=0.1)
     parser.add_argument('--label_smoothing', type=float, default=0.0,
                         help='Label smoothing for CE loss (0.0-0.2, default 0.0 for baseline)')
+    parser.add_argument('--use_coral', action='store_true', default=False,
+                        help='Use CORAL ordinal regression instead of CE+EMD (experimental)')
 
     # Training - Phase 1
     parser.add_argument('--phase1_epochs', type=int, default=10,
