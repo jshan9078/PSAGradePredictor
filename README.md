@@ -2,8 +2,8 @@
 
 A deep learning system for automated PSA grading of collectible cards using dual-branch ResNet architecture trained on Google Cloud Vertex AI.
 
-### 📄 Publications & Academic Writing
-*   **[Technical Paper (PDF)](docs/technical-paper.pdf)**: Detailed mathematical and empirical writeup of architecture, CORAL loss formulation, and ensemble results.
+### Write-Up
+*   **[Technical Paper (PDF)](docs/technical-paper.pdf)**: Mathematical and empirical writeup of architecture, CORAL loss formulation, and ensemble results.
 
 ## Overview
 
