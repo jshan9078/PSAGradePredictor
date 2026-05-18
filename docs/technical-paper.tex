@@ -405,6 +405,9 @@ Rather than utilizing isolated back-pretraining (which can lead to representatio
 \subsection{Imbalance-Aware Sampling}
 Mini-batches sample grades with probability $\propto 1/\text{freq}(k)^\eta$ ($\eta\in[0.3,0.7]$), complementing the weighted loss.
 
+\subsection{Compute Infrastructure}
+All models were trained on Google Cloud Vertex AI using an \texttt{n1-standard-8} instance equipped with one NVIDIA Tesla T4 GPU (16 GB VRAM) and 30 GB of system memory.
+
 \section{From Logits to Predictions and Uncertainty}
 
 The model maps predictions from raw outputs to calibrated probability distributions depending on the selected classification framework.

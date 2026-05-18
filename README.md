@@ -121,6 +121,7 @@ See [CHANGELOG.md](CHANGELOG.md) for complete model evolution history.
 ### Training Configuration
 
 ```bash
+Hardware: 1x NVIDIA Tesla T4 GPU (16 GB VRAM) on GCP Vertex AI n1-standard-8
 Phase 1 (Back-only): 0 epochs (skipped)
 Phase 2 (Dual-branch): 50 epochs
 Loss function: CORAL ordinal regression
