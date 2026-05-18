@@ -2,6 +2,10 @@
 
 A deep learning system for automated PSA grading of collectible cards using dual-branch ResNet architecture trained on Google Cloud Vertex AI.
 
+### 📄 Publications & Academic Writing
+*   **[Technical Paper (PDF)](docs/technical-paper.pdf)**: Detailed mathematical and empirical writeup of architecture, CORAL loss formulation, and ensemble results.
+*   **[LaTeX Manuscript Source](docs/technical-paper.tex)**: Compilable academic paper source code.
+
 ## Overview
 
 This project uses computer vision to predict PSA (Professional Sports Authenticator) grades (1-10) for collectible cards by analyzing both front and back images. The model achieves **0.84 Quadratic Weighted Kappa (QWK)** on validation data using CORAL ordinal regression.
@@ -71,6 +75,8 @@ psa-estimator/
 │   ├── upload_data.sh     # Upload data to GCS
 │   └── submit_training.sh # Submit Vertex AI training job
 ├── docs/                  # Detailed documentation
+│   ├── technical-paper.pdf # Flawlessly compiled 14-page PDF paper
+│   ├── technical-paper.tex # Compilable LaTeX academic manuscript
 │   ├── deployment.md      # Deployment guide
 │   ├── architecture.md    # Model architecture details
 │   └── development.md     # Local development guide
@@ -129,11 +135,12 @@ Optimizer: AdamW
 
 ## Documentation
 
-- **[SETUP.md](SETUP.md)** - Detailed environment setup guide
-- **[CHANGELOG.md](CHANGELOG.md)** - Complete training history and model evolution
-- **[docs/deployment.md](docs/deployment.md)** - Vertex AI deployment guide
-- **[docs/architecture.md](docs/architecture.md)** - Model architecture deep dive
-- **[docs/development.md](docs/development.md)** - Local development workflow
+*   **[docs/technical-paper.pdf](docs/technical-paper.pdf)** - **Academic Technical Paper (PDF)**
+*   **[SETUP.md](SETUP.md)** - Detailed environment setup guide
+*   **[CHANGELOG.md](CHANGELOG.md)** - Complete training history and model evolution
+*   **[docs/deployment.md](docs/deployment.md)** - Vertex AI deployment guide
+*   **[docs/architecture.md](docs/architecture.md)** - Model architecture deep dive
+*   **[docs/development.md](docs/development.md)** - Local development workflow
 
 ## Key Technologies
 
