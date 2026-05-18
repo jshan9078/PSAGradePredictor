@@ -4,7 +4,6 @@ A deep learning system for automated PSA grading of collectible cards using dual
 
 ### 📄 Publications & Academic Writing
 *   **[Technical Paper (PDF)](docs/technical-paper.pdf)**: Detailed mathematical and empirical writeup of architecture, CORAL loss formulation, and ensemble results.
-*   **[LaTeX Manuscript Source](docs/technical-paper.tex)**: Compilable academic paper source code.
 
 ## Overview
 
