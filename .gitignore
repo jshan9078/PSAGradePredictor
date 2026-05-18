@@ -138,3 +138,6 @@ temp/
 # OS
 .DS_Store
 Thumbs.db
+
+# Agent state
+.claude/

@@ -144,7 +144,7 @@ class DualBranchPSA(nn.Module):
         hidden: int = 512,
         use_rim_mask: bool = True,
         rim_mask_ratio: float = 0.07,
-        use_coral: bool = False,  # NEW: Enable CORAL ordinal regression
+        use_coral: bool = False,  # Enable CORAL ordinal regression
         num_classes: int = 10,
     ):
         super().__init__()
@@ -174,7 +174,7 @@ class DualBranchPSA(nn.Module):
         # Cached rim mask (created on first forward pass)
         self.register_buffer('rim_mask', None)
 
-        # Fusion MLP
+        # Fusion: Simple weighted concatenation
         fused_dim = d_b + d_f
         self.fuse = nn.Sequential(
             nn.Linear(fused_dim, hidden),
@@ -279,8 +279,7 @@ class DualBranchPSA(nn.Module):
         h_f = self._forward_front_feature(front)   # [B, d_f]
         h_b = self._forward_back_feature(back)     # [B, d_b]
 
-        # Asymmetric weighting by λ on embeddings (not simple scalar mult before concat;
-        # we scale then concat so the MLP "sees" the weighting directly.)
+        # Fusion: asymmetric weighting by λ
         z = torch.concat([self.lambda_fusion * h_b, (1.0 - self.lambda_fusion) * h_f], dim=1)
         z = self.fuse(z)
 

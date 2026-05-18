@@ -177,9 +177,9 @@ Once local tests pass, proceed with deployment:
 --splits_path gs://.../splits.json              # Splits
 --gcs_checkpoint_dir gs://.../checkpoints/      # Saves here
 --gcs_model_dir gs://.../models/                # Final export
---batch_size 32
---phase1_epochs 10
---phase2_epochs 30
+--batch_size 16
+--phase1_epochs 0
+--phase2_epochs 50
 ```
 
 ---
@@ -235,7 +235,6 @@ gsutil -m cp -r gs://psa-scan-models-us-east1/models/psa_dual_branch_v1/ ./model
 ```
 gs://psa-scan-models-us-east1/
 ├── checkpoints/
-│   ├── phase1_best.pth              # Best back-only model
 │   ├── phase2_best.pth              # Best dual-branch model (USE THIS!)
 │   ├── checkpoint_epoch_5.pth       # Periodic checkpoints
 │   ├── checkpoint_epoch_10.pth
@@ -250,15 +249,10 @@ gs://psa-scan-models-us-east1/
 
 ## 📊 Expected Training Metrics
 
-### Phase 1: Back-Only Pretraining (10 epochs)
+### Phase 2: Dual-Branch Fine-Tuning (50 epochs)
 - Initial Loss: ~2.5-3.0
-- Final Loss: ~1.8-2.2
-- Final QWK: ~0.65-0.75 (back only, not final!)
-
-### Phase 2: Dual-Branch Fine-Tuning (30 epochs)
-- Initial Loss: ~1.5-1.8
 - Final Loss: ~0.8-1.2
-- **Final QWK: ~0.85-0.92** (target!)
+- **Final QWK: ~0.83-0.86** (single-model CORAL target)
 - MAE: ~0.3-0.5 grades
 - Accuracy: ~75-85%
 

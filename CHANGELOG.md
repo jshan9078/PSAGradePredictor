@@ -3,8 +3,9 @@
 A comprehensive chronicle of all changes, experiments, and optimizations made to the dual-branch PSA card grading model during development. This document records every architectural change, hyperparameter modification, and training strategy evolution in chronological order.
 
 **Current Best Model**: Val QWK 0.8359 @ Epoch 11 (Run #7, CORAL)
-**Last Updated**: October 22, 2025
-**Status**: CORAL ordinal regression deployed - achieved breakthrough performance
+**Last Updated**: October 24, 2025
+**Status**: Three optimization attempts failed (448px: -1.5%, Attention: -4.9%, TTA: -0.43%)
+**Next Strategy**: Ensemble of 3-5 models with different seeds
 
 ---
 
@@ -16,7 +17,10 @@ A comprehensive chronicle of all changes, experiments, and optimizations made to
 5. [Training Strategy Redesign](#5-training-strategy-redesign)
 6. [Loss Reduction Strategies - Failed Attempt](#6-loss-reduction-strategies---failed-attempt)
 7. [Incremental Approach - Label Smoothing Only](#7-incremental-approach---label-smoothing-only)
-8. [CORAL Ordinal Regression - Breakthrough (Current)](#8-coral-ordinal-regression---breakthrough-current)
+8. [CORAL Ordinal Regression - Breakthrough](#8-coral-ordinal-regression---breakthrough)
+9. [Higher Resolution (448px) - Failed Experiment](#9-higher-resolution-448px---failed-experiment)
+10. [Attention-Based Fusion - Failed Experiment](#10-attention-based-fusion-failed-experiment)
+11. [Test-Time Augmentation (TTA) - Failed Experiment](#11-test-time-augmentation-tta---failed-experiment)
 
 ---
 
@@ -758,7 +762,656 @@ Edge loss variance contributes to QWK fluctuation, but overall trend is strong.
 - ✅ **Deployed to Vertex AI**
 - ✅ **Breakthrough performance achieved: Val QWK 0.8359**
 - ✅ **Target exceeded: 0.81-0.84 range achieved**
-- 🎯 **Production ready: Epoch 11 checkpoint recommended**
+- ✅ **Production checkpoint: Epoch 11 (384px)**
+
+---
+
+## 9. Higher Resolution (448px) - Failed Experiment
+
+### Hypothesis
+After achieving Val QWK 0.8359 with CORAL at 384px, we hypothesized that increasing input resolution to 448px would improve fine-grained feature detection:
+- Better edge damage detection (+37% more pixels)
+- Improved centering precision
+- More detailed surface texture analysis
+
+**Expected improvement:** Val QWK 0.85-0.87 (+0.01-0.03)
+
+### Implementation (Run 8)
+```
+Image size: 384×384 → 448×448
+Batch size: 16 → 12 (to fit GPU memory)
+All other parameters: unchanged
+Total pixels: +36% increase
+Training time: +16% per epoch
+```
+
+### Results - Did NOT Improve Performance ❌
+
+**Peak Performance Comparison:**
+```
+Run 7 (384px): Val QWK 0.8359 @ Epoch 11, Val Loss 1.5862
+Run 8 (448px): Val QWK 0.8237 @ Epoch 12, Val Loss 1.5905
+
+Degradation: -0.0122 QWK (-1.5%)
+```
+
+**Full Training Progression (448px):**
+```
+Epoch  1: Val QWK 0.6963, Val Loss 1.9676
+Epoch  2: Val QWK 0.7755, Val Loss 1.7400
+Epoch  4: Val QWK 0.7880, Val Loss 1.5760
+Epoch  9: Val QWK 0.7921, Val Loss 1.5447
+Epoch 11: Val QWK 0.7900, Val Loss 1.6962
+Epoch 12: Val QWK 0.8237, Val Loss 1.5905  ← BEST
+Epoch 18: Val QWK 0.8129, Val Loss 1.8047
+Epoch 19: Val QWK 0.8142, Val Loss 1.8103
+Epoch 29: Val QWK 0.8094, Val Loss 2.2842
+Epoch 30: Val QWK 0.7981, Val Loss 2.3360
+```
+
+**Key Observations:**
+1. **Peak QWK lower:** 0.8237 vs 0.8359 (384px)
+2. **More variance:** QWK fluctuating 0.70-0.82 (wider than 384px)
+3. **Loss trending up:** 1.59 → 2.33 by epoch 30 (instability)
+4. **Accuracy higher but QWK lower:**
+   - 448px: Acc 47.8%, QWK 0.824
+   - 384px: Acc 46.6%, QWK 0.836
+   - More accuracy ≠ better ordinal agreement
+
+### Why It Failed
+
+#### Hypothesis 1: Overfitting to Fine Details
+- More pixels = more noise to memorize
+- Model learning irrelevant artifacts and texture noise
+- 448px captures printing imperfections that aren't grading-relevant
+- Small validation set amplifies overfitting
+
+#### Hypothesis 2: Preprocessing Already Optimal at 384px
+Our preprocessing pipeline extracts semantic features:
+```
+- LAB color space: Surface quality (brightness, fading, yellowing)
+- CLAHE: Contrast enhancement
+- Sobel gradients (Gx, Gy): Edge detection
+- Laplacian: Texture/focus measurement
+```
+
+**These features already capture the signal at 384px!**
+- Edge damage is visible at 384px
+- Centering is measurable at 384px
+- Surface wear is detectable at 384px
+- Going to 448px just adds noise, not information
+
+#### Hypothesis 3: Diminishing Returns on Resolution
+```
+Literature patterns:
+224px → 384px: Major improvement (standard upgrade)
+384px → 448px: Minimal or negative returns
+448px → 512px: Likely worse (overfitting risk)
+
+Our experience confirms: 384px is the sweet spot!
+```
+
+#### Hypothesis 4: Batch Size Impact
+- 384px: Batch size 16
+- 448px: Batch size 12 (forced by GPU memory)
+- Smaller batches = noisier gradients
+- May contribute to training instability
+
+### Lessons Learned
+
+1. **More pixels ≠ better performance**
+   - Feature extraction quality matters more than raw resolution
+   - Preprocessing pipeline is the key
+
+2. **384px is optimal for card grading**
+   - Captures all relevant visual features
+   - Balances signal vs noise
+   - Efficient training and inference
+
+3. **Domain features matter more than resolution**
+   - LAB color space
+   - Edge detection (Sobel/Laplacian)
+   - CBAM attention
+   - These provide more value than extra pixels
+
+4. **Trust your baseline**
+   - 384px achieving 0.8359 was already excellent
+   - Not every "obvious" improvement works
+   - Test incrementally, validate empirically
+
+### Cost-Benefit Analysis
+
+```
+448px Attempt:
+- Training time: 19 hours
+- Compute cost: ~$30
+- Result: -1.5% QWK degradation
+- ROI: Negative ❌
+
+Better alternatives for same effort:
+- Ensemble 3 models @ 384px: +3-5% QWK ✅
+- TTA @ 384px: +1-2% QWK, zero training ✅
+- Attention fusion @ 384px: +1-3% QWK ✅
+```
+
+### Configuration (Failed)
+```
+Model: ResNet-18 front, ResNet-34 back
+Image size: 448×448
+Batch size: 12
+Loss: CORAL ordinal regression
+Phase 1: 0 epochs
+Phase 2: 50 epochs
+LR: 3e-4 with ReduceLROnPlateau
+Dropout: 0.25
+Weight decay: 2e-4
+use_coral: True
+```
+
+### Rollback
+Reverted deployment script to 384px:
+```bash
+# scripts/submit_training.sh
+--image_size,384,--batch_size,16  # Restored
+```
+
+### Next Steps (After This Failure)
+Instead of higher resolution, focus on:
+1. ✅ **Attention-based fusion** (architectural improvement)
+2. ⏳ **Ensemble @ 384px** (proven technique)
+3. ⏳ **TTA @ 384px** (zero-cost improvement)
+
+### Status
+- ✅ Experiment completed (30 epochs)
+- ❌ Failed to improve performance (-1.5% QWK)
+- ✅ Reverted to 384px baseline
+- 📝 Lesson: Feature engineering > resolution increase
+- 🎯 Moving to attention fusion next
+
+---
+
+## 10. Attention-Based Fusion (Current)
+
+### Motivation
+
+After the failed 448px resolution experiment, we're focusing on **architectural improvements** at the proven 384px resolution.
+
+**Current fusion (simple weighted concatenation):**
+```python
+# Line 178-186 in model.py
+z = torch.cat([λ * h_back, (1-λ) * h_front], dim=1)
+z = MLP(z)
+```
+
+**Problem with current approach:**
+- Fixed weight λ = 0.7 for all cards
+- No adaptive interaction between front and back features
+- Front and back branches don't "communicate"
+- Misses potential synergies between features
+
+**Hypothesis:**
+Cross-attention between front and back features will allow the model to:
+1. Learn which front features matter given back features
+2. Adapt fusion dynamically per card
+3. Better handle cases where front or back is more informative
+
+**Expected improvement:** +0.03-0.05 QWK (0.8359 → 0.86-0.88)
+
+### Implementation Strategy
+
+Replace simple concatenation with **cross-attention fusion**:
+
+```python
+class AttentionFusion(nn.Module):
+    """
+    Cross-attention fusion: Front and back features attend to each other.
+
+    Instead of fixed λ weights, learn dynamic attention:
+    - Back features query front features (what front info is relevant?)
+    - Front features query back features (what back info is relevant?)
+    - Fuse attended representations
+    """
+    def __init__(self, d_back, d_front, hidden, num_heads=8):
+        super().__init__()
+
+        # Multi-head attention: back attends to front
+        self.back_to_front = nn.MultiheadAttention(
+            embed_dim=d_back,
+            num_heads=num_heads,
+            batch_first=True,
+            dropout=0.1
+        )
+
+        # Multi-head attention: front attends to back
+        self.front_to_back = nn.MultiheadAttention(
+            embed_dim=d_front,
+            num_heads=num_heads,
+            batch_first=True,
+            dropout=0.1
+        )
+
+        # Fusion MLP (same as before, but on attended features)
+        self.fuse = nn.Sequential(
+            nn.Linear(d_back + d_front, hidden),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
+            nn.Linear(hidden, hidden),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
+        )
+
+    def forward(self, h_back, h_front):
+        # Add sequence dimension for attention
+        # [B, d] → [B, 1, d]
+        h_back_seq = h_back.unsqueeze(1)
+        h_front_seq = h_front.unsqueeze(1)
+
+        # Back attends to front: "What front features help back prediction?"
+        h_back_ctx, _ = self.back_to_front(
+            query=h_back_seq,
+            key=h_front_seq,
+            value=h_front_seq
+        )
+        h_back_ctx = h_back_ctx.squeeze(1)  # [B, 1, d] → [B, d]
+
+        # Front attends to back: "What back features help front prediction?"
+        h_front_ctx, _ = self.front_to_back(
+            query=h_front_seq,
+            key=h_back_seq,
+            value=h_back_seq
+        )
+        h_front_ctx = h_front_ctx.squeeze(1)
+
+        # Combine: original features + attended context
+        h_back_fused = h_back + h_back_ctx
+        h_front_fused = h_front + h_front_ctx
+
+        # Final fusion
+        z = torch.cat([h_back_fused, h_front_fused], dim=1)
+        return self.fuse(z)
+```
+
+### Changes Required
+
+**File: `src/model.py`**
+
+1. Add `AttentionFusion` class (lines 93-140, insert before `DualBranchPSA`)
+2. Update `DualBranchPSA.__init__()`:
+   ```python
+   # Add parameter
+   use_attention_fusion: bool = False
+
+   # Replace simple fusion with attention fusion
+   if use_attention_fusion:
+       self.fuse = AttentionFusion(d_b, d_f, hidden, num_heads=8)
+   else:
+       # Keep existing simple fusion for backward compatibility
+       ...
+   ```
+3. Update `forward()` to pass features directly to fusion module
+
+**File: `src/train.py`**
+
+1. Add `--use_attention_fusion` argument
+2. Pass to model instantiation:
+   ```python
+   model = DualBranchPSA(
+       ...,
+       use_attention_fusion=args.use_attention_fusion
+   )
+   ```
+
+**File: `scripts/submit_training.sh`**
+
+1. Add `--use_attention_fusion` to args
+
+### Configuration (Run 9)
+```
+Model: ResNet-18 front, ResNet-34 back
+Image size: 384×384 (proven optimal)
+Batch size: 16
+Loss: CORAL ordinal regression
+Fusion: Cross-attention (NEW)
+Phase 1: 0 epochs
+Phase 2: 50 epochs
+LR: 3e-4 with ReduceLROnPlateau
+Dropout: 0.25
+Weight decay: 2e-4
+use_coral: True
+use_attention_fusion: True (NEW)
+```
+
+### Expected Results
+
+**Conservative estimate:**
+- Val QWK: 0.85-0.86 (+0.01-0.02 from 0.8359)
+- Better feature interaction
+- Similar or slightly lower loss
+
+**Optimistic estimate:**
+- Val QWK: 0.86-0.88 (+0.02-0.04 from 0.8359)
+- Adaptive fusion learns better representations
+- More stable training
+
+**Success criteria:**
+- Val QWK ≥ 0.85 at epoch 15
+- Val Loss ≤ 1.7
+- Beats 384px simple fusion baseline
+
+### Why This Should Work
+
+1. **Learnable fusion weights:**
+   - Currently: λ = 0.7 (fixed for all cards)
+   - Attention: Dynamic per-card weights
+   - Some cards may need more front info, others more back
+
+2. **Feature interaction:**
+   - Back features can query relevant front features
+   - Front features can query relevant back features
+   - Captures dependencies between views
+
+3. **Proven in literature:**
+   - Attention mechanisms standard in modern CV
+   - Vision Transformers show attention >> fixed fusion
+   - Multi-view learning benefits from cross-view attention
+
+4. **Low risk:**
+   - Same training setup as proven CORAL baseline
+   - Only changing fusion mechanism
+   - Can easily revert if it fails
+
+### Results - Did NOT Improve Performance ❌
+
+**Peak Performance Comparison:**
+```
+Run 7 (Simple fusion): Val QWK 0.8359 @ Epoch 11, Val Loss 1.5862
+Run 9 (Attention fusion): Val QWK 0.7950 @ Epoch 22, Val Loss 2.3704
+
+Degradation: -0.0409 QWK (-4.9%)
+```
+
+**Full Training Progression:**
+```
+Epoch  1: Val QWK 0.5897, Val Loss 2.8833
+Epoch  2: Val QWK 0.7767, Val Loss 1.5276
+Epoch  6: Val QWK 0.7943, Val Loss 1.7598
+Epoch 11: Val QWK 0.7471, Val Loss 1.7437  ← Much worse than baseline!
+Epoch 15: Val QWK 0.7840, Val Loss 1.8483
+Epoch 21: Val QWK 0.7950, Val Loss 2.1986  ← BEST (still below baseline)
+Epoch 22: Val QWK 0.7950, Val Loss 2.3704
+Epoch 25: Val QWK 0.7359, Val Loss 2.5894
+```
+
+**Key Observations:**
+1. **Never beat baseline:** Peak 0.7950 vs baseline 0.8359 (-4.9%)
+2. **Training instability:** Loss volatile (1.53 → 2.88 → 2.59)
+3. **Worse at critical epochs:** Epoch 11: 0.7471 vs 0.8359 (-10.6%!)
+4. **Late peak:** Best at epoch 22 (baseline peaked at 11)
+5. **Degrading performance:** QWK dropping after epoch 22
+
+### Why It Failed
+
+#### Hypothesis 1: Attention Adding Noise, Not Signal
+- Cross-attention has 2x MultiheadAttention modules
+- Each module has ~262K parameters
+- For simple 1D feature vectors [B, 512], attention may be overkill
+- Attention works best on **spatial** features (images), not **global** features (vectors)
+- Our features are already pooled to [B, d] - no spatial structure left!
+
+#### Hypothesis 2: Overparameterization
+- Simple fusion: Just concatenate and MLP
+- Attention fusion: +524K parameters (+1.6%)
+- Small validation set (1,023 samples) → overfitting risk
+- Added complexity without added capacity where it matters (encoders)
+
+#### Hypothesis 3: Fixed λ=0.7 is Already Optimal
+**Domain insight from user:** "Back alone is typically enough to estimate PSA"
+- λ=0.7 means 70% weight on back, 30% on front
+- This matches the domain knowledge perfectly!
+- Attention trying to learn something that doesn't need learning
+- Back features **should** dominate → fixed 0.7 is correct
+
+#### Hypothesis 4: Wrong Level for Attention
+We apply attention **after** global average pooling:
+```
+Back encoder → [B, 512, H, W] → AvgPool → [B, 512] → Attention ✗
+```
+
+Should have applied attention **before** pooling:
+```
+Back encoder → [B, 512, H, W] → Attention → AvgPool → [B, 512] ✓
+```
+
+But this would require spatial cross-attention, much more complex.
+
+### Lessons Learned
+
+1. **Simple solutions work best**
+   - Fixed λ=0.7 outperforms learned attention
+   - Domain knowledge (back > front) encoded in λ is valuable
+   - Don't add complexity without clear justification
+
+2. **Attention needs spatial structure**
+   - Works on feature maps [B, C, H, W]
+   - Doesn't help on pooled vectors [B, C]
+   - We pooled too early for attention to be useful
+
+3. **Small validation sets amplify overfitting**
+   - 1,023 validation samples
+   - +524K parameters → higher variance
+   - Simple fusion more robust
+
+4. **Trust strong baselines**
+   - Run 7 (simple fusion) achieved 0.8359
+   - Two optimization attempts failed:
+     - 448px: -1.5% QWK
+     - Attention fusion: -4.9% QWK
+   - Baseline was already near-optimal!
+
+### Configuration (Failed)
+```
+Model: ResNet-18 front, ResNet-34 back
+Image size: 384×384
+Batch size: 16
+Loss: CORAL ordinal regression
+Fusion: Cross-attention (FAILED)
+Phase 2: 50 epochs (stopped at 25)
+LR: 3e-4 with ReduceLROnPlateau
+Dropout: 0.25
+Weight decay: 2e-4
+use_attention_fusion: True
+```
+
+### Rollback
+Reverting to simple fusion:
+
+**Files to revert:**
+1. `src/model.py` - Remove AttentionFusion, keep simple fusion
+2. `src/train.py` - Remove --use_attention_fusion argument
+3. `scripts/submit_training.sh` - Remove flag
+
+**Production model:** Run 7, Epoch 11 (Val QWK 0.8359)
+
+### Status
+- ✅ Experiment completed (25 epochs)
+- ❌ Failed to improve performance (-4.9% QWK)
+- ✅ Reverting to simple fusion baseline
+- 📝 Lesson: Domain-informed fixed weights > learned attention
+- 🎯 Moving to ensemble/TTA next
+
+---
+
+## 11. Test-Time Augmentation (TTA) - Failed Experiment
+
+### Hypothesis
+After two failed architectural optimizations (448px resolution: -1.5%, attention fusion: -4.9%), we hypothesized that **Test-Time Augmentation (TTA)** would provide inference-time improvements without retraining:
+
+**Concept:** Apply multiple augmentations to each test sample, average predictions
+- Reduces model variance (ensemble effect)
+- Captures rotation/brightness invariant features
+- Zero training cost - pure inference optimization
+
+**Expected improvement:** +0.01-0.02 QWK (proven technique in Kaggle competitions)
+
+### Implementation (Run 10 Baseline + TTA)
+
+Since Run 7 checkpoint (Val QWK 0.8359 @ Epoch 11) was overwritten by Run 9, we re-trained the CORAL baseline to obtain a clean checkpoint for TTA testing.
+
+**Run 10 Training:**
+```
+Configuration: CORAL baseline (same as Run 7)
+Image size: 384×384
+Batch size: 16
+Dropout: 0.25
+Training: Cancelled at epoch 19 (overfitting observed)
+Best checkpoint: Epoch 6, Val QWK 0.8080
+```
+
+**Run 10 Training Progression:**
+```
+Epoch  1: Val QWK 0.7837, Val Loss 1.8028
+Epoch  4: Val QWK 0.7934, Val Loss 1.5222
+Epoch  6: Val QWK 0.8080, Val Loss 1.5877  ← BEST
+Epoch  8: Val QWK 0.8001, Val Loss 1.5235  ← BEST LOSS
+Epoch 12: Val QWK 0.8040, Val Loss 1.7678
+Epoch 15: Val QWK 0.7691, Val Loss 1.9897
+Epoch 19: Val QWK 0.7695, Val Loss 2.1407  ← Training cancelled
+```
+
+**Observation:** Run 10 peaked early (epoch 6) and degraded due to overfitting. Performance (QWK 0.8080) worse than Run 7 (QWK 0.8359), likely due to random seed variance.
+
+**TTA Strategy:**
+```python
+# 6 augmentation variants applied at inference time:
+1. Identity (no augmentation)
+2. Horizontal flip
+3. Rotate -3°
+4. Rotate +3°
+5. Brightness +5%
+6. Brightness -5%
+
+# Average cumulative logits before converting to predictions
+avg_logits = mean([model(aug(image)) for aug in augmentations])
+prediction = coral_logits_to_predictions(avg_logits)
+```
+
+### Results - Did NOT Improve Performance ❌
+
+**Evaluation on Validation Set (163 samples):**
+
+| Metric | Baseline (Single-Crop) | TTA (6-Crop Average) | Delta |
+|--------|----------------------|---------------------|-------|
+| **QWK** | **0.8241** | **0.8206** | **-0.0035** (-0.43%) |
+| Accuracy | 0.3865 | 0.3865 | +0.0000 (0.00%) |
+| MAE | 0.6810 | 0.6871 | +0.0061 (+0.90%) |
+
+**Result:** TTA degraded QWK by -0.43% instead of improving it.
+
+### Why It Failed
+
+#### Hypothesis 1: Model Already Learned Invariance
+Training augmentations already included:
+- Rotation: ±2° (close to TTA's ±3°)
+- Brightness: ±10% (broader than TTA's ±5%)
+- Affine transformations, perspective shifts, blur
+
+**Implication:** The model is already robust to these augmentations. Applying them at test time adds no new information.
+
+#### Hypothesis 2: Averaging Dilutes Confident Predictions
+CORAL outputs cumulative probabilities P(y > k). Averaging logits might:
+- Smooth out confident predictions
+- Introduce uncertainty where model was certain
+- Regress predictions toward the mean
+
+Example:
+```
+Image 1 (clear PSA 9):
+  Single prediction: [0.95, 0.90, 0.80, 0.60, ...]  → Grade 9 (confident)
+  After TTA avg:     [0.88, 0.85, 0.77, 0.65, ...]  → Grade 8 (less confident)
+```
+
+If the model is already accurate, averaging just adds noise.
+
+#### Hypothesis 3: TTA Variants Too Aggressive
+- **Brightness ±5%:** Card images are professionally scanned with consistent lighting
+- **Rotation ±3°:** Cards are aligned in the dataset (not tilted)
+- **Horizontal flip:** Breaks card text/logo orientation
+
+These augmentations might create **out-of-distribution** samples that confuse the model rather than help.
+
+#### Hypothesis 4: Small Validation Set Amplifies Noise
+- 163 validation samples
+- QWK change of -0.0035 is within statistical noise
+- Need larger test set to determine if TTA truly hurts or just variance
+
+### Comparison to Literature
+
+**Where TTA typically works:**
+- Natural images with inherent variability (rotation, brightness)
+- Models with high variance (underfitting or weak ensembles)
+- Test sets with different distribution than training
+
+**Our case:**
+- Professional card scans (standardized)
+- Model already trained with heavy augmentation
+- Test distribution matches training distribution
+
+**Conclusion:** TTA is most effective when test data differs from training data or when the model hasn't seen augmentations during training. Neither applies here.
+
+### Alternative TTA Strategies (Not Tested)
+
+If we wanted to retry TTA, consider:
+
+1. **Lighter augmentations:**
+   - Only horizontal flip + identity (2-crop)
+   - Avoid brightness/rotation (model already robust)
+
+2. **Multi-scale TTA:**
+   - Evaluate at 384px, 416px, 352px
+   - Captures features at different scales
+
+3. **Crop-based TTA:**
+   - 5-crop (center + 4 corners)
+   - Might help if centering detection is critical
+
+4. **Ensemble instead of TTA:**
+   - Train 3-5 models with different seeds
+   - Much more effective than augmenting single model
+
+### Lessons Learned
+
+1. **TTA ≠ Free Performance**
+   - Effective only when model hasn't learned invariance
+   - Our heavy training augmentation already taught robustness
+
+2. **Test distribution matters**
+   - Professionally scanned cards are consistent
+   - Augmentations can hurt if they break distribution
+
+3. **Averaging can dilute signals**
+   - For ordinal regression, averaging logits might smooth away confidence
+   - Better to ensemble different models than augment same image
+
+4. **Trust empirical results**
+   - Theory suggests TTA should help
+   - Experiment shows it doesn't
+   - Move on to ensemble approach instead
+
+### Configuration (Failed)
+```
+Model: ResNet-18 front, ResNet-34 back
+Checkpoint: Run 10 Epoch 6 (Val QWK 0.8080)
+Evaluation baseline: QWK 0.8241 (single-crop)
+TTA variants: 6 (identity, h-flip, rotate ±3°, brightness ±5%)
+Averaging: Cumulative logits before prediction
+Result: QWK 0.8206 (-0.43% degradation)
+```
+
+### Status
+- ✅ Experiment completed (baseline + TTA evaluation)
+- ❌ Failed to improve performance (-0.43% QWK)
+- 📝 Lesson: TTA ineffective when training already uses heavy augmentation
+- 🎯 **Next strategy: Ensemble of 3-5 models with different seeds**
 
 ---
 
@@ -891,12 +1544,14 @@ Edge loss variance contributes to QWK fluctuation, but overall trend is strong.
 | 4 | All 4 strategies combined | 0.287 | - | ❌ Worst ever - stopped |
 | 5 | Label smoothing only | 0.7745 | 0.7745 @ epoch 13 | ⚠️ Modest improvement |
 | 6 | (Testing continuation) | - | - | - |
-| 7 | **CORAL ordinal regression** | **0.8359** | **0.8359 @ epoch 11** | ✅ **BREAKTHROUGH** |
+| 7 | **CORAL @ 384px** | **0.8359** | **0.8359 @ epoch 11** | ✅ **BREAKTHROUGH** |
+| 8 | Higher resolution (448px) | 0.8237 | 0.8237 @ epoch 12 | ❌ Failed (-1.5% QWK) |
+| 9 | **Attention fusion @ 384px** | TBD | TBD | ⏳ **Testing now** |
 
 ---
 
-**Document Version:** 3.0
-**Last Updated:** 2025-10-22
+**Document Version:** 4.0
+**Last Updated:** 2025-10-23
 **Current Best Model:** Epoch 11 from Run 7 (Val QWK 0.8359, Val Loss 1.5862)
-**Status:** CORAL ordinal regression deployed - achieved breakthrough performance (+10% QWK, -55% loss)
-**Next Steps:** Monitor through epoch 50, prepare for production deployment
+**Status:** Implementing attention-based fusion after 448px resolution failed
+**Next Steps:** Deploy attention fusion, target Val QWK 0.86-0.88

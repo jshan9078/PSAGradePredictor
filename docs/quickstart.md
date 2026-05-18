@@ -46,7 +46,7 @@ Complete end-to-end guide to train your PSA grading model on Google Cloud.
 - Submits Vertex AI custom training job
 - **Machine**: n1-standard-8 (8 vCPUs, 30 GB RAM)
 - **GPU**: 1x NVIDIA Tesla T4
-- **Training**: Phase 1 (10 epochs) + Phase 2 (30 epochs)
+- **Training**: Phase 1 (0 epochs - skipped for alignment) + Phase 2 (50 epochs)
 
 **Duration**: ~6-8 hours
 
@@ -81,7 +81,6 @@ gsutil -m cp -r gs://psa-scan-models-us-east1/models/psa_dual_branch_v1/ ./model
 
 **Outputs**:
 - Checkpoints: `gs://psa-scan-models-us-east1/checkpoints/`
-  - `phase1_best.pth`
   - `phase2_best.pth`
   - `checkpoint_epoch_N.pth`
 - Final model: `gs://psa-scan-models-us-east1/models/psa_dual_branch_v1/`
@@ -94,9 +93,9 @@ gsutil -m cp -r gs://psa-scan-models-us-east1/models/psa_dual_branch_v1/ ./model
 
 | Setting | Value | Modify In |
 |---------|-------|-----------|
-| Batch size | 32 | `submit_training.sh` |
-| Phase 1 epochs | 10 | `submit_training.sh` |
-| Phase 2 epochs | 30 | `submit_training.sh` |
+| Batch size | 16 | `submit_training.sh` |
+| Phase 1 epochs | 0 (skipped) | `submit_training.sh` |
+| Phase 2 epochs | 50 | `submit_training.sh` |
 | Learning rate (Phase 1) | 1e-3 | `submit_training.sh` |
 | Learning rate (Phase 2) | 3e-4 | `submit_training.sh` |
 | GPU type | Tesla T4 | `submit_training.sh` |

@@ -99,9 +99,9 @@ container-image-uri=${IMAGE_URI} \
 --output_dir,/tmp/checkpoints,\
 --gcs_checkpoint_dir,gs://psa-scan-models-us-east1/checkpoints/,\
 --gcs_model_dir,gs://psa-scan-models-us-east1/models/psa_dual_branch_v1/,\
---batch_size,32,\
---phase1_epochs,10,\
---phase2_epochs,30,\
+--batch_size,16,\
+--phase1_epochs,0,\
+--phase2_epochs,50,\
 --lr_phase1,1e-3,\
 --lr_phase2,3e-4,\
 --use_sampler"
@@ -158,7 +158,6 @@ gsutil cp gs://psa-scan-models-us-east1/checkpoints/phase2_best.pth ./
 ```
 
 Checkpoints saved:
-- `phase1_best.pth` - Best back-only pretrained model
 - `phase2_best.pth` - Best dual-branch fine-tuned model
 - `checkpoint_epoch_N.pth` - Periodic checkpoints (every 5 epochs)
 
@@ -185,9 +184,9 @@ gsutil -m cp -r gs://psa-scan-models-us-east1/models/psa_dual_branch_v1/ ./model
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `--batch_size` | 32 | Training batch size |
-| `--phase1_epochs` | 10 | Back-only pretraining epochs |
-| `--phase2_epochs` | 30 | Dual-branch fine-tuning epochs |
+| `--batch_size` | 16 | Training batch size |
+| `--phase1_epochs` | 0 (skipped) | Back-only pretraining epochs |
+| `--phase2_epochs` | 50 | Dual-branch fine-tuning epochs |
 | `--lr_phase1` | 1e-3 | Phase 1 learning rate |
 | `--lr_phase2` | 3e-4 | Phase 2 learning rate |
 | `--lambda_fusion` | 0.7 | Back branch weighting (0.7 = 70% back, 30% front) |

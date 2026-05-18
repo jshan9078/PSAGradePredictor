@@ -323,6 +323,18 @@ def compute_class_weights(dataset, num_classes=10):
 
 
 def main(args):
+    # Set random seed for reproducibility
+    if args.seed is not None:
+        torch.manual_seed(args.seed)
+        np.random.seed(args.seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed(args.seed)
+            torch.cuda.manual_seed_all(args.seed)
+            # For reproducibility (may reduce performance slightly)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+        print(f"Random seed set to: {args.seed}")
+
     # Device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
@@ -625,6 +637,10 @@ if __name__ == "__main__":
     # Augmentation & Sampling
     parser.add_argument('--no_augment', action='store_true')
     parser.add_argument('--use_sampler', action='store_true', default=True)
+
+    # Reproducibility
+    parser.add_argument('--seed', type=int, default=None,
+                        help='Random seed for reproducibility (default: None = random)')
     parser.add_argument('--sampler_eta', type=float, default=0.5)
     parser.add_argument('--mixup_alpha', type=float, default=0.0,
                         help='Mixup alpha parameter (0.0 = disabled/baseline, 0.3-0.4 for regularization)')
